@@ -20,10 +20,10 @@ jobs:
           set -euo pipefail
           mkdir -p /tmp/v10-preserve /tmp/v10-unpack
           if [ -d docs/superpowers ]; then cp -a docs/superpowers /tmp/v10-preserve/superpowers; fi
-          cat bootstrap/CSGO_Guard_v10.zip.b64.part* | base64 -d > /tmp/CSGO_Guard_v10.zip
+          cat bootstrap/CSGO_Guard_v10.tar.xz.b64.part* | base64 -d > /tmp/CSGO_Guard_v10.tar.xz
           python - <<'PY'
           from pathlib import Path
-          import shutil, zipfile
+          import shutil
           root=Path('.')
           for p in list(root.iterdir()):
               if p.name == '.git':
@@ -32,9 +32,8 @@ jobs:
                   shutil.rmtree(p)
               else:
                   p.unlink()
-          with zipfile.ZipFile('/tmp/CSGO_Guard_v10.zip') as z:
-              z.extractall(root)
           PY
+          tar -xJf /tmp/CSGO_Guard_v10.tar.xz -C .
           if [ -d /tmp/v10-preserve/superpowers ]; then
             mkdir -p docs
             rm -rf docs/superpowers
